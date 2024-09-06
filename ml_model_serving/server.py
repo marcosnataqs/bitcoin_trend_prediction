@@ -1,6 +1,7 @@
 # LitServe => https://github.com/Lightning-AI/litserve
 
-import joblib, numpy as np
+import joblib
+import numpy as np
 import litserve as ls
 
 class BTC_Trend_Prediction_API(ls.LitAPI):
