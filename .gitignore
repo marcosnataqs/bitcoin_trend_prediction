@@ -1,3 +1,4 @@
 poetry.lock
 .venv
 .env
+.env_exemplo
