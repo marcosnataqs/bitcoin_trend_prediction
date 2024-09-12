@@ -1,10 +1,13 @@
 import requests
 
+# Production URL => https://bitcoin-trend-prediction.onrender.com
+BASE_URL = "http://127.0.0.1:8000"
+
 
 def predict_multiple_days(data_list) -> list:
     predictions = []
     for data in data_list:
-        response = requests.post("http://127.0.0.1:8000/predict", json=data)
+        response = requests.post(f"{BASE_URL}/predict", json=data)
         if response.status_code == 200:
             predictions.append(
                 (
