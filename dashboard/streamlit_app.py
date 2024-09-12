@@ -26,7 +26,9 @@ def get_prediction():
     data = {k: int(v) if isinstance(v, np.int64) else v for k, v in data.items()}
 
     # Make prediction request
-    response = requests.post("https://bitcoin-trend-prediction.onrender.com/predict", json=data)
+    response = requests.post(
+        "https://bitcoin-trend-prediction.onrender.com/predict", json=data
+    )
     if response.status_code == 200:
         return response.json()["prediction"], response.json()["probability"]
     else:
@@ -58,7 +60,7 @@ def get_fear_greed_index():
         return None
 
 
-st.title("💰 Bitcoin Trend Prediction Dashboard")
+st.title("💰 Bitcoin Trend Prediction")
 
 # Section 1: ML Model Prediction
 st.header("Today's Bitcoin Trend Prediction")
@@ -66,11 +68,21 @@ prediction, probability = get_prediction()
 
 if prediction is not None:
     trend = "Up" if prediction == 1 else "Down"
-    icon = "⬆️" if prediction == 1 else "⬇️"
-    st.subheader(f"Predicted Trend: {trend} {icon}")
-    st.write(f"Probability: {probability:.2f}")
+    icon = "🚀" if prediction == 1 else "⬇️"
+
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.markdown(
+            f"<h1 style='text-align: center;'>{icon}</h1>",
+            unsafe_allow_html=True,
+        )
+    with col2:
+        st.subheader(f"Predicted Trend: {trend}")
+        st.progress(probability)
+        st.text(f"Model Probability Metric: {probability:.2%}")
+        st.text("Above 60% means trend is to go up otherwise down")
 else:
-    st.write("Unable to fetch prediction at the moment.")
+    st.error("Unable to fetch prediction at the moment.")
 
 # Section 2: Bitcoin Price Chart
 st.header("Bitcoin Price (Last 7 Days)")

@@ -49,7 +49,6 @@ class BTC_Trend_Prediction_API(ls.LitAPI):
             "neg_sentiment_y",
             "fng_index_y",
         ]
-        self.default_values = {feature: 0 for feature in self.feature_names}
 
     def decode_request(self, request):
         features = {k: v for k, v in request.items() if k in self.feature_names}
