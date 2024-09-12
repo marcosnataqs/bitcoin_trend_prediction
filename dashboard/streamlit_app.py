@@ -26,7 +26,7 @@ def get_prediction():
     data = {k: int(v) if isinstance(v, np.int64) else v for k, v in data.items()}
 
     # Make prediction request
-    response = requests.post("http://127.0.0.1:8000/predict", json=data)
+    response = requests.post("https://bitcoin-trend-prediction.onrender.com/predict", json=data)
     if response.status_code == 200:
         return response.json()["prediction"], response.json()["probability"]
     else:
