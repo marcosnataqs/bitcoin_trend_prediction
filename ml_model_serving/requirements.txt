@@ -1,3 +1,0 @@
-litserve
-joblib
-numpy
