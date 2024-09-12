@@ -49,16 +49,22 @@ class BTC_Trend_Prediction_API(ls.LitAPI):
             "neg_sentiment_y",
             "fng_index_y",
         ]
+        self.default_values = {feature: 0 for feature in self.feature_names}
 
     def decode_request(self, request):
-        features = np.array([request[feature] for feature in self.feature_names])
-        return features.reshape(1, -1)
+        features = {k: v for k, v in request.items() if k in self.feature_names}
+        return features
 
     def predict(self, x):
-        probabilities = self.model.predict_proba(x)
+        input_data = self.prepare_input(x)
+        probabilities = self.model.predict_proba(input_data)
         class_1_prob = probabilities[:, 1]  # Probability for class 1
         prediction = int(class_1_prob >= 0.6)  # Apply threshold
         return prediction, class_1_prob
+
+    def prepare_input(self, features):
+        input_array = np.array([features.get(f, 0) for f in self.feature_names]).reshape(1, -1)
+        return input_array
 
     def encode_response(self, output):
         prediction, probability = output

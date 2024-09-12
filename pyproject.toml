@@ -23,6 +23,8 @@ litserve = "^0.2.2"
 python-dotenv = "^1.0.1"
 xgboost = "^2.1.1"
 joblib = "^1.4.2"
+streamlit = "^1.38.0"
+plotly = "^5.24.1"
 
 
 [tool.poetry.group.dev.dependencies]
