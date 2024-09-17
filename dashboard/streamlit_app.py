@@ -14,12 +14,16 @@ def get_prediction():
     # Prepare the data for prediction
     data = {
         "date": latest_data.index[0].strftime("%Y-%m-%d"),
-        "open": latest_data["Open"].iloc[0],
-        "high": latest_data["High"].iloc[0],
         "low": latest_data["Low"].iloc[0],
         "close": latest_data["Close"].iloc[0],
-        "volume": latest_data["Volume"].iloc[0],
         # Add other features here
+        # "sentiment":
+        # "neg_sentiment":
+        # "close_ratio_2":
+        # "edit_2":
+        # "close_ratio_7": 
+        # "close_ratio_365": 
+        # "edit_365":
     }
 
     # Convert int64 to regular Python int
