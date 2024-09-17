@@ -24,30 +24,15 @@ class BTC_Trend_Prediction_API(ls.LitAPI):
 
         self.model = joblib.load(model_path)
         self.feature_names = [
-            "open",
-            "high",
             "low",
             "close",
-            "volume",
+            "sentiment",
+            "neg_sentiment",
             "close_ratio_2",
             "edit_2",
-            "trend_2",
             "close_ratio_7",
-            "edit_7",
-            "trend_7",
-            "close_ratio_30",
-            "edit_30",
-            "trend_30",
-            "close_ratio_60",
-            "edit_60",
-            "trend_60",
             "close_ratio_365",
-            "edit_365",
-            "trend_365",
-            "edit_count_y",
-            "sentiment_y",
-            "neg_sentiment_y",
-            "fng_index_y",
+            "edit_365"
         ]
 
     def decode_request(self, request):
