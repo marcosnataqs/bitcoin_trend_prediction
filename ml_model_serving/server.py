@@ -26,8 +26,8 @@ class BTC_Trend_Prediction_API(ls.LitAPI):
         self.feature_names = [
             "low",
             "close",
-            "sentiment_y",
-            "neg_sentiment_y",
+            "sentiment",
+            "neg_sentiment",
             "close_ratio_2",
             "edit_2",
             "close_ratio_7",
