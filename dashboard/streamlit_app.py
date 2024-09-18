@@ -5,26 +5,28 @@ import requests
 import plotly.graph_objects as go
 import numpy as np
 from dashboard_utils import (get_fear_greed_index, 
-                             get_bitcoin_data)
+                             get_bitcoin_data,
+                             get_sentiment_df)
 
 
 def get_prediction():
     # Get the latest Bitcoin data
     btc = yf.Ticker("BTC-USD")
     latest_data = btc.history(period="1d")
+    latest_sentiment = get_sentiment_df()
 
     # Prepare the data for prediction
     data = {
         "date": latest_data.index[0].strftime("%Y-%m-%d"),
         "low": latest_data["Low"].iloc[0],
         "close": latest_data["Close"].iloc[0],
-        # "sentiment":
-        # "neg_sentiment":
+        "sentiment":latest_sentiment['sentiment'].tail(1),
+        "neg_sentiment": latest_sentiment['neg_sentiment'].tail(1),
         # "close_ratio_2":
-        # "edit_2":
+        # "edit_2": latest_sentiment['edit_2'].tail(1),
         # "close_ratio_7": 
         # "close_ratio_365": 
-        # "edit_365":
+        # "edit_365": latest_sentiment['edit_365'].tail(1)
     }
 
     # Convert int64 to regular Python int
