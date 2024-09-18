@@ -6,27 +6,28 @@ import plotly.graph_objects as go
 import numpy as np
 from dashboard_utils import (get_fear_greed_index, 
                              get_bitcoin_data,
-                             get_sentiment_df)
+                             get_data)
 
 
 def get_prediction():
     # Get the latest Bitcoin data
     btc = yf.Ticker("BTC-USD")
     latest_data = btc.history(period="1d")
-    latest_sentiment = get_sentiment_df()
+    data_load = get_data()
+    
 
     # Prepare the data for prediction
     data = {
         "date": latest_data.index[0].strftime("%Y-%m-%d"),
-        "low": latest_data["Low"].iloc[0],
-        "close": latest_data["Close"].iloc[0],
-        "sentiment":latest_sentiment['sentiment'].tail(1),
-        "neg_sentiment": latest_sentiment['neg_sentiment'].tail(1),
-        # "close_ratio_2":
-        # "edit_2": latest_sentiment['edit_2'].tail(1),
-        # "close_ratio_7": 
-        # "close_ratio_365": 
-        # "edit_365": latest_sentiment['edit_365'].tail(1)
+        "low": data_load["low"].values.tolist(),
+        "close": data_load["close"].values.tolist(),
+        "sentiment":data_load['sentiment'].values.tolist(),
+        "neg_sentiment": data_load['neg_sentiment'].values.tolist(),
+        "close_ratio_2": data_load["close_ratio_2"].values.tolist(),
+        "edit_2": data_load['edit_2'].values.tolist(),
+        "close_ratio_7": data_load["close_ratio_7"].values.tolist(),
+        "close_ratio_365": data_load["close_ratio_365"].values.tolist(),
+        "edit_365": data_load['edit_365'].values.tolist()
     }
 
     # Convert int64 to regular Python int
