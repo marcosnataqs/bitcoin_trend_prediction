@@ -3,27 +3,27 @@ import yfinance as yf
 import pandas as pd
 import mwclient
 import time
-#import datetime
-from datetime import datetime, date, timedelta
+from datetime import datetime
 from transformers import pipeline
 from statistics import mean
 
 sentiment_pipeline = pipeline(model="distilbert-base-uncased-finetuned-sst-2-english")
-data_inicio = datetime.strptime('2018-01-01', '%Y-%m-%d')
-#data_inicio = datetime.strptime(str((date.today() - timedelta(days=30))), '%Y-%m-%d')
+data_inicio = datetime.strptime("2018-01-01", "%Y-%m-%d")
+# data_inicio = datetime.strptime(str((date.today() - timedelta(days=30))), '%Y-%m-%d')
+
 
 def extract_btc(data_inicio: datetime) -> pd.DataFrame:
     ticker = yf.Ticker("BTC-USD")
     btc = ticker.history(start=data_inicio)
     return btc
 
-def format_base(df:pd.DataFrame) -> pd.DataFrame:
+
+def format_base(df: pd.DataFrame) -> pd.DataFrame:
     df.index = pd.to_datetime(df.index).tz_localize(None)
     del df["Dividends"]
     del df["Stock Splits"]
     df.columns = [c.lower() for c in df.columns]
     return df
-
 
 
 def get_fear_greed_index():
@@ -38,6 +38,7 @@ def get_fear_greed_index():
     else:
         return None
 
+
 def get_bitcoin_data():
     btc = yf.Ticker("BTC-USD")
     data = btc.history(period="1mo")
@@ -49,12 +50,14 @@ def get_last_7_days(data):
     start_date = end_date - pd.Timedelta(days=7)
     return data.loc[start_date:end_date]
 
+
 def extract_reviews() -> list:
-   site = mwclient.Site("en.wikipedia.org")
-   page = site.pages["Bitcoin"]
-   revs = list(page.revisions(start=data_inicio, dir="newer"))
-   revs = sorted(revs, key=lambda rev: rev["timestamp"])
-   return revs
+    site = mwclient.Site("en.wikipedia.org")
+    page = site.pages["Bitcoin"]
+    revs = list(page.revisions(start=data_inicio, dir="newer"))
+    revs = sorted(revs, key=lambda rev: rev["timestamp"])
+    return revs
+
 
 def find_sentiment(text):
     sent = sentiment_pipeline([text[:250]])[0]
@@ -63,38 +66,44 @@ def find_sentiment(text):
         score *= -1
     return score
 
+
 def format_edits() -> dict:
     edits = {}
     revs = extract_reviews()
-    for rev in revs:        
+    for rev in revs:
         date = time.strftime("%Y-%m-%d", rev["timestamp"])
         if date not in edits:
             edits[date] = dict(sentiments=list(), edit_count=0)
-        
+
         edits[date]["edit_count"] += 1
         comment = rev.get("comment", "")
         edits[date]["sentiments"].append(find_sentiment(comment))
     return edits
 
-def clean_sentiment_base(sentiment_edits:dict) -> dict:
+
+def clean_sentiment_base(sentiment_edits: dict) -> dict:
     edits = sentiment_edits
     for key in edits:
         if len(edits[key]["sentiments"]) > 0:
             edits[key]["sentiment"] = mean(edits[key]["sentiments"])
-            edits[key]["neg_sentiment"] = len([s for s in edits[key]["sentiments"] if s < 0]) / len(edits[key]["sentiments"])
+            edits[key]["neg_sentiment"] = len(
+                [s for s in edits[key]["sentiments"] if s < 0]
+            ) / len(edits[key]["sentiments"])
         else:
             edits[key]["sentiment"] = 0
             edits[key]["neg_sentiment"] = 0
-        
+
         del edits[key]["sentiments"]
     return edits
+
 
 def create_edits_df() -> pd.DataFrame:
     edits = clean_sentiment_base(format_edits())
     edits_df = pd.DataFrame.from_dict(edits, orient="index")
-    edits_df.index = pd.to_datetime(edits_df.index) 
+    edits_df.index = pd.to_datetime(edits_df.index)
     return edits_df
-    
+
+
 def improve_edits_df(edits_df: pd.DataFrame) -> pd.DataFrame:
     dates = pd.date_range(start=data_inicio, end=datetime.today())
     edits_df = edits_df.reindex(dates, fill_value=0)
@@ -108,10 +117,12 @@ def improve_edits_df(edits_df: pd.DataFrame) -> pd.DataFrame:
     rolling_edits = rolling_edits.dropna()
     return rolling_edits
 
+
 def get_sentiment_df() -> pd.DataFrame:
     edits_df = create_edits_df()
     improved_df = improve_edits_df(edits_df)
     return improved_df
+
 
 def merge_dfs() -> pd.DataFrame:
     btc = format_base(extract_btc(data_inicio))
@@ -119,30 +130,27 @@ def merge_dfs() -> pd.DataFrame:
     data = btc.merge(df_sentiment, left_index=True, right_index=True)
     return data
 
+
 def trends_col(df: pd.DataFrame) -> pd.DataFrame:
     horizons = [2, 7, 365]
 
     for horizon in horizons:
         rolling_averages = df.rolling(horizon, min_periods=1).mean()
 
-        ratio_column = f'close_ratio_{horizon}'
-        df[ratio_column] = df['close'] / rolling_averages['close']
+        ratio_column = f"close_ratio_{horizon}"
+        df[ratio_column] = df["close"] / rolling_averages["close"]
 
-        edit_column = f'edit_{horizon}'
-        df[edit_column] = rolling_averages['edit_count']
+        edit_column = f"edit_{horizon}"
+        df[edit_column] = rolling_averages["edit_count"]
 
     return df
 
-def get_data()-> pd.DataFrame:
+
+def get_data() -> pd.DataFrame:
     df = merge_dfs()
     df = trends_col(df)
     return df.tail(1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     df = get_data()
-    print("HEAD")
-    print(df.head())
-    # print("TAIL")
-    # print(df.tail())
-
-

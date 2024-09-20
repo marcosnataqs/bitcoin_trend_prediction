@@ -1,33 +1,30 @@
 import streamlit as st
 import yfinance as yf
-import pandas as pd
 import requests
 import plotly.graph_objects as go
 import numpy as np
-from dashboard_utils import (get_fear_greed_index, 
-                             get_bitcoin_data,
-                             get_data)
+
+from dashboard_utils import get_fear_greed_index, get_bitcoin_data, get_data
 
 
-def get_prediction():
+def get_prediction() -> tuple[int, float]:
     # Get the latest Bitcoin data
     btc = yf.Ticker("BTC-USD")
     latest_data = btc.history(period="1d")
     data_load = get_data()
-    
 
     # Prepare the data for prediction
     data = {
         "date": latest_data.index[0].strftime("%Y-%m-%d"),
         "low": data_load["low"].values.tolist(),
         "close": data_load["close"].values.tolist(),
-        "sentiment":data_load['sentiment'].values.tolist(),
-        "neg_sentiment": data_load['neg_sentiment'].values.tolist(),
+        "sentiment": data_load["sentiment"].values.tolist(),
+        "neg_sentiment": data_load["neg_sentiment"].values.tolist(),
         "close_ratio_2": data_load["close_ratio_2"].values.tolist(),
-        "edit_2": data_load['edit_2'].values.tolist(),
+        "edit_2": data_load["edit_2"].values.tolist(),
         "close_ratio_7": data_load["close_ratio_7"].values.tolist(),
         "close_ratio_365": data_load["close_ratio_365"].values.tolist(),
-        "edit_365": data_load['edit_365'].values.tolist()
+        "edit_365": data_load["edit_365"].values.tolist(),
     }
 
     # Convert int64 to regular Python int
@@ -41,31 +38,6 @@ def get_prediction():
         return response.json()["prediction"], response.json()["probability"]
     else:
         return None, None
-
-
-# def get_bitcoin_data():
-#     btc = yf.Ticker("BTC-USD")
-#     data = btc.history(period="1mo")
-#     return get_last_7_days(data)
-
-
-# def get_last_7_days(data):
-#     end_date = data.index[-1]
-#     start_date = end_date - pd.Timedelta(days=7)
-#     return data.loc[start_date:end_date]
-
-
-# def get_fear_greed_index():
-#     url = "https://api.alternative.me/fng/?limit=7"
-#     response = requests.get(url)
-#     if response.status_code == 200:
-#         data = response.json()["data"]
-#         df = pd.DataFrame(data)
-#         df["timestamp"] = pd.to_datetime(df["timestamp"].astype(float), unit="s")
-#         df = df.sort_values("timestamp")
-#         return df
-#     else:
-#         return None
 
 
 st.title("💰 Bitcoin Trend Prediction")
