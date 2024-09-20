@@ -3,3 +3,5 @@ yfinance
 pandas
 plotly
 numpy
+mwclient
+transformers
