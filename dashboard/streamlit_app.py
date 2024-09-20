@@ -60,7 +60,7 @@ if prediction is not None:
         st.subheader(f"Predicted Trend: {trend}")
         st.progress(probability)
         st.text(f"Model Probability Metric: {probability:.2%}")
-        st.text("Above 60% means trend is to go up otherwise down")
+        st.text("Above 55% means trend is to go up otherwise down")
 else:
     st.error("Unable to fetch prediction at the moment.")
 
