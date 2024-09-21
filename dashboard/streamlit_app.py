@@ -3,15 +3,18 @@ import yfinance as yf
 import requests
 import plotly.graph_objects as go
 import numpy as np
+import os
 
-from dashboard_utils import get_fear_greed_index, get_bitcoin_data, get_data
+from dashboard_utils import get_fear_greed_index, get_bitcoin_data, get_from_adls
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def get_prediction() -> tuple[int, float]:
     # Get the latest Bitcoin data
     btc = yf.Ticker("BTC-USD")
     latest_data = btc.history(period="1d")
-    data_load = get_data()
+    data_load = get_from_adls(os.environ["CONTAINER_NAME"])
 
     # Prepare the data for prediction
     data = {
@@ -26,6 +29,8 @@ def get_prediction() -> tuple[int, float]:
         "close_ratio_365": data_load["close_ratio_365"].values.tolist(),
         "edit_365": data_load["edit_365"].values.tolist(),
     }
+
+    # print(data)
 
     # Convert int64 to regular Python int
     data = {k: int(v) if isinstance(v, np.int64) else v for k, v in data.items()}
