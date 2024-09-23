@@ -170,7 +170,7 @@ def connect_to_adls(container_name: str, blob_name: str):
     return blob
 
 def get_from_adls(container_name: str):
-    blob_name = 'raw/bitcoin/btc.csv'
+    blob_name = 'raw/bitcoin/btc_sent.csv'
     blob = connect_to_adls(container_name, blob_name)
     blob_data = blob.download_blob()
     blob_content = blob_data.readall()
