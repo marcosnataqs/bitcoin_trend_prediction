@@ -4,7 +4,7 @@ import os
 import joblib
 import numpy as np
 import litserve as ls
-from sklearn.preprocessing import StandardScaler
+# from sklearn.preprocessing import StandardScaler
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -48,14 +48,15 @@ class BTC_Trend_Prediction_API(ls.LitAPI):
         return prediction, class_1_prob
 
     def prepare_input(self, features):
-        std_scaler = StandardScaler()
+        # std_scaler = StandardScaler()
         input_array = np.array([features.get(f, 0) for f in self.feature_names]).reshape(1, -1)
-        input_array = std_scaler.fit_transform(input_array)
+        # input_array = std_scaler.fit_transform(input_array)
         return input_array
 
     def encode_response(self, output):
         prediction, probability = output
         return {"prediction": prediction, "probability": float(probability)}
+    
 
 
 if __name__ == "__main__":
