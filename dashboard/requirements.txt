@@ -8,3 +8,4 @@ transformers
 torch
 joblib
 azure-storage-blob
+python-dotenv
