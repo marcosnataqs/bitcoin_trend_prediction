@@ -7,3 +7,4 @@ mwclient
 transformers
 torch
 joblib
+azure-storage-blob
