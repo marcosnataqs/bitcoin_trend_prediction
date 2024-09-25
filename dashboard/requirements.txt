@@ -9,3 +9,4 @@ torch
 joblib
 azure-storage-blob
 python-dotenv
+scikit-learn
