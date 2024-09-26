@@ -5,10 +5,12 @@ import plotly.graph_objects as go
 import numpy as np
 import os
 
-from dashboard_utils import get_fear_greed_index, get_bitcoin_data, get_from_adls
 from dotenv import load_dotenv
 
+from dashboard_utils import get_fear_greed_index, get_bitcoin_data, get_from_adls
+
 load_dotenv()
+
 
 def get_prediction() -> tuple[int, float]:
     # Get the latest Bitcoin data
